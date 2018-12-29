@@ -1,0 +1,43 @@
+hostname NWS_switch_05
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+aaa authorization exec default local if-authenticated
+!
+ip name-server 8.8.8.8
+no ip domain lookup
+ip domain name dna.lab
+!
+username admin privilege 15 password 0 Cisco123!
+!
+!
+vtp domain ciscodna
+vtp mode transparent
+cpp system-default
+device-tracking tracking
+!
+vlan 1,100,1021-1024
+!
+interface range GigabitEthernet0/1-8
+switchport mode access
+switchport access vlan 1021
+spanning-tree portfast
+!
+interface GigabitEthernet0/9
+switchport mode trunk
+no shutdown
+!
+!
+interface Vlan1
+description FOC2101Y3SJ and WS-C3560CX-8PT-S and floor5
+ip address 10.10.10.05 255.255.255.0
+!
+ip default-gateway 10.22.32.129
+!
+snmp-server community NWS RO
+!
+ntp server 195.113.144.201
+!
+end

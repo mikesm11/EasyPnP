@@ -1,0 +1,10 @@
+class Credentials():
+    """ Class for setting credentials """
+    controller_username = ""
+    controller_password = ""
+    ise_address = ""
+    ise_username = ""
+    ise_password = ""
+    ssh_address = ""
+    ssh_username = ""
+    ssh_password = ""

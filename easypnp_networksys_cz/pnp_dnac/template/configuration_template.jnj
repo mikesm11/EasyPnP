@@ -1,0 +1,43 @@
+hostname {{hostName}}
+!
+aaa new-model
+!
+!
+aaa authentication login default local
+aaa authorization exec default local if-authenticated
+!
+ip name-server 8.8.8.8
+no ip domain lookup
+ip domain name dna.lab
+!
+username {{userName}} privilege 15 password 0 {{passWord}}
+!
+!
+vtp domain ciscodna
+vtp mode transparent
+cpp system-default
+device-tracking tracking
+!
+vlan 1,100,1021-1024
+!
+interface range GigabitEthernet0/1-8
+switchport mode access
+switchport access vlan 1021
+spanning-tree portfast
+!
+interface GigabitEthernet0/9
+switchport mode trunk
+no shutdown
+!
+!
+interface Vlan1
+description {{serialNumber}} and {{platformId}} and {{installFloor}}
+ip address {{ipAddress}} {{ipMask}}
+!
+ip default-gateway 10.22.32.129
+!
+snmp-server community NWS RO
+!
+ntp server 195.113.144.201
+!
+end
