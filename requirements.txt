@@ -1,56 +1,17 @@
-asn1crypto==0.24.0          OK
-attrs==17.4.0               x
-bcrypt==3.1.4               OK
-certifi==2017.4.17          OK
-cffi==1.11.5                OK
-chardet==3.0.4              OK
-ciscosparkapi==0.8.3        x
-click==6.7                  x
-colorama==0.3.9             x
-cryptography==2.1.4         OK
-cx-Freeze==5.1.1            x
-cycler==0.10.0              x
-decorator==4.1.2            x
-easygui==0.98.1             x
-et-xmlfile==1.0.1           x
-Flask==0.12.2               x
-future==0.16.0              x
-idna==2.5                   OK
-itsdangerous==0.24          x
-jdcal==1.3                  x
-Jinja2==2.10                OK
-lxml==4.1.1                 x
-MarkupSafe==1.0             OK
-matplotlib==2.1.0           x
-mock==2.0.0                 x
-ncclient==0.5.3             x
-networkx==2.0               x
-numpy==1.13.3               x
-oauthlib==2.0.7             x
-openpyxl==2.5.1             x
-OpenVulnQuery==1.26         x
-pandas==0.23.0              x
-paramiko==2.4.0             OK
-pbr==3.1.1                  x
-pexpect==4.6.0              x
-pluggy==0.6.0               x
-ptyprocess==0.6.0           x
-py==1.5.2                   x
-pyasn1==0.4.2               OK
-pycparser==2.18             OK
-PyNaCl==1.2.1               OK
-pyparsing==2.2.0            x
-pyq-kernel==1.0             x
-pytest==3.4.2               x
-python-dateutil==2.6.1      x
-pytz==2017.2                x
-requests==2.10.0            OK
-requests-oauthlib==0.8.0    x
-requests-toolbelt==0.8.0    x
-six==1.11.0                 OK
-twython==3.6.0              x
-uniq==1.4.0.36              x
-urllib3==1.21.1             OK
-virtualenv==15.1.0          x
-Werkzeug==0.12.2            x
-xlrd==1.1.0                 OK
+asn1crypto==0.24.0
+bcrypt==3.1.6
+certifi==2019.3.9
+cffi==1.12.3
+chardet==3.0.4
+cryptography==2.6.1
+idna==2.8
+Jinja2==2.10.1
+MarkupSafe==1.1.1
+paramiko==2.4.2
+pyasn1==0.4.5
+pycparser==2.19
+PyNaCl==1.3.0
+requests==2.21.0
+six==1.12.0
+urllib3==1.24.3
+xlrd==1.2.0
