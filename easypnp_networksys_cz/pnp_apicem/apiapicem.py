@@ -2,21 +2,23 @@ from easypnp_networksys_cz import program
 from easypnp_networksys_cz.pnp_apicem import ticket
 import json
 import requests
-import base64
 
 
 class ApiAPICEM:
+    # Local variables
     __ticket = ticket.Ticket()
     __urlController = ''
     __urlControllerAPI = ''
 
     @staticmethod
     def set_url(new_url):
+        """ Method to set local variables related to URL address of the controller """
         ApiAPICEM.__urlController = new_url
         ApiAPICEM.__urlControllerAPI = "https://" + new_url + "/"
 
     @staticmethod
     def get_url():
+        """ Method to return URL address of the controller """
         return ApiAPICEM.__urlController
 
 ########################################################################################################################
@@ -25,17 +27,19 @@ class ApiAPICEM:
 
     @staticmethod
     def api_connection(first_url):
-        """ Tries connection to APIC-EM and asks for credentials """
+        """ Method tries connection to APIC-EM """
         try:
-            # Defines maximum attempts for request
-            counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json"}
+                # Create a payload for POST method
                 payload = {"username": program.Program.get_credentials(c_user=True, c_pass=False), "password": program.Program.get_credentials(c_user=False, c_pass=True)}
+                # API call
                 response = requests.post('https://' + first_url + '/api/v1/ticket', data=json.dumps(payload), headers=header, verify=False)
+                # Transform a response to JSON format
                 r_json = response.json()
-                # If program request call returned error code
-                if r_json.get('response') and r_json['response'].get('errorCode'):
+                # If the request call returns a response
+                if r_json.get('response'):
                     return True
         except Exception:
             print("   ERROR! Connection to APIC-EM is not working! Enter correct IP address!")
@@ -43,49 +47,65 @@ class ApiAPICEM:
 
     @staticmethod
     def api_get_user():
-        """ Gets a user basic info """
+        """ Method gets a user basic info """
         try:
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # API call
                 response = requests.get(ApiAPICEM.__urlControllerAPI + 'api/v1/user', headers=header, verify=False)
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call returns an error code
                 if isinstance(r_json['response'], dict) and r_json['response'].get('errorCode'):
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
                     return False
+                # Otherwise print a notification
                 else:
                     print("  " + str(response))
                     print("  Ticket is still valid!")
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("  ERROR! Connection to APIC-EM is not working! Enter correct IP address!")
 
     @staticmethod
     def api_get_ticket():
-        """ Gets a new valid ticket and asks for possible credentials """
+        """ Method asks for possible credentials and gets a new valid ticket """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json"}
+                # Create a payload for POST method
                 payload = {"username": program.Program.get_credentials(c_user=True,c_pass=False), "password": program.Program.get_credentials(c_user=False,c_pass=True)}
+                # API call
                 response = requests.post(ApiAPICEM.__urlControllerAPI + 'api/v1/ticket', data=json.dumps(payload), headers=header, verify=False)
+                # Print the response code
                 print("  " + str(response))
+                # Transform a response to JSON format
                 r_json = response.json()
-                # If program request call returned error code
+                # If the request call returns an error code
                 if r_json.get('response') and r_json['response'].get('errorCode'):
+                    # If the response code is 403
                     if response.status_code == 403:
                         print("  Response status code 403 = access is denied by controller!")
                         pass
-                    # Call main program controller for valid credentials
+                    # Call the method for setting valid credentials
                     state = program.Program.update_credentials()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     elif state == False:
                         raise RuntimeError()
                     continue
+                # Otherwise print a success notification
                 else:
                     print("  Ticket was successfully created!")
+                # Return a new valid ticket
                 return r_json['response']['serviceTicket']
         except Exception:
             print("  ERROR! Ticket was not created!")
@@ -94,23 +114,31 @@ class ApiAPICEM:
 
 
 
+
+
     @staticmethod
     def api_get_network_devices():
-        """ Gets all network devices """
+        """ Method gets all network devices """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                    # Create a header with instruction
                     header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                    # API call
                     response = requests.get(ApiAPICEM.__urlControllerAPI + 'api/v1/network-device', headers=header, verify=False)
-                    #print("  " + str(response))
+                    # Transform a response to JSON format
                     r_json = response.json()
+                    # If the request call returns an error code
                     if isinstance(r_json['response'], dict) and r_json['response'].get('errorCode'):
+                        # Call the method for creating new ticket
                         ApiAPICEM.__ticket.get_new_ticket()
+                        # Subtract the counter
                         counter -= 1
                         if counter < 0:
                             raise RuntimeError()
                         continue
+                    # Return the response in JSON format
                     return r_json
         except Exception as e:
             print("  ERROR! Connection to APIC-EM is not working! Enter correct IP address!")
@@ -118,21 +146,27 @@ class ApiAPICEM:
 
     @staticmethod
     def api_get_device_interface(deviceID):
-        """ Gets all interfaces of selected device """
+        """ Method gets all interfaces of selected device """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # API call
                 response = requests.get(ApiAPICEM.__urlControllerAPI + 'api/v1/interface/network-device/' + deviceID, headers=header, verify=False)
-                #print("   " + str(response))
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call returns an error code
                 if isinstance(r_json['response'], dict) and r_json['response'].get('errorCode'):
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     continue
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("   Something's wrong: " + str(e))
@@ -250,7 +284,7 @@ class ApiAPICEM:
             except:
                 print("  File does not exist!")
                 pass
-            header = {'X-Auth-Token': ApiAPICEM.__ticket.get_ticket()}
+            header = {"X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
             try:
                 response = requests.post(ApiAPICEM.__urlControllerAPI + 'api/v1/file/config', files=payload, headers=header, verify=False)
                 print("  " + str(response))

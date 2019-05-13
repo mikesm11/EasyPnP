@@ -4,19 +4,21 @@ import json
 import requests
 import base64
 
-
 class ApiDNAC:
+    # Local variables
     __token = token.Token()
     __urlController = ''
     __urlControllerAPI = ''
 
     @staticmethod
     def set_url(new_url):
+        """ Method to set local variables related to URL address of the controller """
         ApiDNAC.__urlController = new_url
         ApiDNAC.__urlControllerAPI = "https://" + new_url + "/"
 
     @staticmethod
     def get_url():
+        """ Method to return URL address of the controller """
         return ApiDNAC.__urlController
 
 ########################################################################################################################
@@ -25,16 +27,18 @@ class ApiDNAC:
 
     @staticmethod
     def api_connection(first_url):
-        """ Tries connection to DNA-C and asks for credentials """
+        """ Method tries connection to DNA-C """
         try:
-            # Defines maximum attempts for request
-            counter = 3
             while True:
+                # Create a payload for POST method
                 payload_string = (program.Program.get_credentials(c_user=True, c_pass=False) + ":" + program.Program.get_credentials(c_user=False, c_pass=True)).encode('utf-8')
+                # Transform payload by base64 encoding
                 payload_b64 = (base64.b64encode(payload_string)).decode('utf-8')
+                # Create a header with instruction
                 header = {"content-type": "application/json", "authorization": "Basic " + payload_b64}
+                # API call
                 response = requests.request("POST", 'https://' + first_url + '/api/system/v1/auth/token', headers=header, verify=False)
-                # If program request call returned error code
+                # If the request call returns a response code
                 if response.status_code != 200:
                     return True
         except Exception:
@@ -43,74 +47,98 @@ class ApiDNAC:
 
     @staticmethod
     def api_get_host():
-        """ Gets a user basic info """
+        """ Method gets a user basic info """
         try:
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiDNAC.__token.get_token()}
+                # API call
                 response = requests.request("GET", ApiDNAC.__urlControllerAPI + 'api/v1/host', headers=header, verify=False)
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call returns an error code
                 if r_json.get("message") or r_json.get("exp") or response.status_code != 200:
+                    # Call the method for creating new token
                     ApiDNAC.__token.get_new_token()
                     return False
+                # Otherwise print a notification
                 else:
                     print("  " + str(response))
                     print("  Token is still valid!")
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("  ERROR! Connection to DNA-C is not working! Enter correct IP address!")
 
     @staticmethod
     def api_get_token():
-        """ Gets a new valid token and asks for possible credentials """
+        """ Method asks for possible credentials and gets a new valid token """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a payload for POST method
                 payload_string = (program.Program.get_credentials(c_user=True, c_pass=False) + ":" + program.Program.get_credentials(c_user=False, c_pass=True)).encode('utf-8')
+                # Transform payload by base64 encoding
                 payload_b64 = (base64.b64encode(payload_string)).decode('utf-8')
+                # Create a header with instruction
                 header = {"content-type": "application/json", "authorization": "Basic " + payload_b64}
+                # API call
                 response = requests.request("POST", ApiDNAC.__urlControllerAPI + 'api/system/v1/auth/token', headers=header, verify=False)
+                # Print the response code
                 print("  " + str(response))
-                # If program request call returned error code
+                # If the request call returns an error code
                 if response.status_code != 200:
                     if response.status_code == 403:
                         print("  Response status code 403 = access is denied by controller!")
                         pass
-                    # Call main program controller for valid credentials
+                    # Call the method for setting valid credentials
                     state = program.Program.update_credentials()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     elif state == False:
                         raise RuntimeError()
                     continue
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call doesn't return a response
                 if not r_json.get("Token"):
+                    # Call the method for setting valid credentials
                     program.Program.update_credentials()
                     continue
+                # Otherwise print a success notification
                 else:
                     print("  Token was successfully created!")
+                # Return a new valid token
                 return r_json["Token"]
         except Exception:
             print("  ERROR! Token was not created!")
 
     @staticmethod
     def api_get_network_devices():
-        """ Gets all network devices """
+        """ Method gets all network devices """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiDNAC.__token.get_token()}
+                # API call
                 response = requests.request("GET", ApiDNAC.__urlControllerAPI + 'api/v1/network-device', headers=header, verify=False)
-                #print("   " + str(response))
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call returns an error code
                 if r_json.get("message") or r_json.get("exp") or response.status_code != 200:
+                    # Call the method for creating new token
                     ApiDNAC.__token.get_new_token()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     continue
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("  ERROR! Connection to DNA-C is not working! Enter correct IP address!")
@@ -118,21 +146,27 @@ class ApiDNAC:
 
     @staticmethod
     def api_get_device_interface(deviceID):
-        """ Gets all interfaces of selected device """
+        """ Method gets all interfaces of selected device """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiDNAC.__token.get_token()}
+                # API call
                 response = requests.request("GET", ApiDNAC.__urlControllerAPI + 'api/v1/interface/network-device/' + deviceID, headers=header, verify=False)
-                #print("   " + str(response))
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call returns an error code
                 if r_json.get("message") or r_json.get("exp") or response.status_code != 200:
+                    # Call the method for creating new token
                     ApiDNAC.__token.get_new_token()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     continue
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("   Something's wrong: " + str(e))
