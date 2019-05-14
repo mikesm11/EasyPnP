@@ -116,6 +116,7 @@ class ApiAPICEM:
 
 
 
+
     @staticmethod
     def api_get_network_devices():
         """ Method gets all network devices """
@@ -177,21 +178,29 @@ class ApiAPICEM:
 
     @staticmethod
     def api_get_pnp_project():
-        """ Gets all PnP projects """
+        """ Method gets all PnP projects """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # API call
                 response = requests.get(ApiAPICEM.__urlControllerAPI + 'api/v1/pnp-project', headers=header, verify=False)
+                # Print the response code
                 print("  " + str(response))
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call returns an error code
                 if isinstance(r_json['response'], dict) and r_json['response'].get('errorCode'):
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     continue
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("  ERROR! Connection to APIC-EM is not working! Enter correct IP address!")
@@ -199,25 +208,35 @@ class ApiAPICEM:
 
     @staticmethod
     def api_create_pnp_project(project_name):
-        """ Create PnP project """
+        """ Method creates a PnP project """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # Create a payload for POST method
                 payload = "[{\"siteName\": \"" + project_name + "\"}]"
+                # API call
                 response = requests.post(ApiAPICEM.__urlControllerAPI + 'api/v1/pnp-project', data=payload, headers=header, verify=False)
+                # Print the response code
                 print("  " + str(response))
+                # If the response code is 202
                 if response.status_code == 202:
                     print("   New project " + project_name + " was successfully created!")
                     pass
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call returns an error code
                 if isinstance(r_json['response'], dict) and r_json['response'].get('errorCode'):
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     continue
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("   ERROR! Connection to APIC-EM is not working! Enter correct IP address!")
@@ -225,23 +244,32 @@ class ApiAPICEM:
 
     @staticmethod
     def api_delete_pnp_project(projectID, printResp=True):
-        """ Delete PnP project """
+        """ Method deletes a PnP project """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # API call
                 response = requests.delete(ApiAPICEM.__urlControllerAPI + 'api/v1/pnp-project/' + projectID, headers=header, verify=False)
+                # Print the response code if printResp is True
                 print("   " + str(response)) if printResp else print("    " + str(response))
+                # If the response code is 202 and printResp is True
                 if response.status_code == 202 and printResp:
                     print("   Project was successfully deleted!")
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call returns an error code
                 if isinstance(r_json['response'], dict) and r_json['response'].get('errorCode'):
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     continue
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("   Something's wrong: " + str(e)) if printResp else print("    Something's wrong: " + str(e))
@@ -252,21 +280,29 @@ class ApiAPICEM:
 
     @staticmethod
     def api_get_pnp_configuration():
-        """ Gets all PnP configurations """
+        """ Method gets all PnP configurations """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # API call
                 response = requests.get(ApiAPICEM.__urlControllerAPI + 'api/v1/file/namespace/config', headers=header, verify=False)
+                # Print the response code
                 print("  " + str(response))
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call returns an error code
                 if isinstance(r_json['response'], dict) and r_json['response'].get('errorCode'):
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     continue
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("  ERROR! Connection to APIC-EM is not working! Enter correct IP address!")
@@ -274,37 +310,50 @@ class ApiAPICEM:
 
     @staticmethod
     def api_upload_pnp_configuration(configuration_path, configuration_file, number):
-        """ Upload all PnP configurations """
+        """ Method uploads all PnP configurations from the local folder into the APIC-EM """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             try:
+                # File parameters from the local folder are saved into the object
                 configuration_filename = open(configuration_path, "r")
+                # Create a payload for POST method
                 payload = {'fileUpload': configuration_filename}
             except:
                 print("  File does not exist!")
                 pass
+            # Create a header with instruction
             header = {"X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
             try:
+                # API call
                 response = requests.post(ApiAPICEM.__urlControllerAPI + 'api/v1/file/config', files=payload, headers=header, verify=False)
+                # Print the response code
                 print("  " + str(response))
+                # If the response code is 200
                 if response.status_code == 200:
                     print("  Configuration " + configuration_file + " was successfully uploaded!")
                     number += 1
             except requests.exceptions.RequestException as e:
                 print("  ERROR! Connection to APIC-EM is not working! Enter correct IP address!")
                 return False
+            # Transform a response to JSON format
             r_json = response.json()
+            # Save an error code into a variable
             a = r_json['response'].get('errorCode')
             try:
+                # If file has already been uploaded
                 if a == "FILE_ALREADY_EXISTS":
                     print("  Configuration " + configuration_file + " has already been uploaded in the past!")
+                # If the request call returns "RBAC"
                 elif (isinstance(r_json['response'], dict)) and (a == "RBAC"):
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     pass
+                # Return the number variable which counts successfully uploaded configurations
                 return number
             except Exception as e:
                 print("  Something's wrong: " + str(e))
@@ -313,35 +362,48 @@ class ApiAPICEM:
 
     @staticmethod
     def api_delete_pnp_configuration(configurationID, printResp=True, printResp2=True, printResp3=True):
-        """ Delete PnP configuration """
+        """ Method deletes a PnP configuration """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # API call
                 response = requests.delete(ApiAPICEM.__urlControllerAPI + 'api/v1/file/' + configurationID, headers=header, verify=False)
+                # Print the response code if printResp is True
                 print("   " + str(response)) if printResp else None
+                # If the response code is 200 and printResp is True
                 if response.status_code == 200 and printResp:
                     print("   Configuration was successfully deleted!")
                     pass
+                # If the response code is 200 and printResp2 is True
                 if response.status_code == 200 and printResp2:
                     print("     Configuration was successfully deleted!")
                     pass
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the response code is 404 and printResp is True
                 if response.status_code == 404 and printResp:
                     print("   Configuration has already been deleted!")
                     pass
+                # If the response code is 404 and printResp2 is True
                 elif response.status_code == 404 and printResp2:
                     print("     Configuration has already been deleted!")
                     pass
+                # If the response code is 404 and printResp3 is True
                 elif response.status_code == 404 and printResp3:
                     pass
+                # If the request call returns an error code
                 elif isinstance(r_json['response'], dict) and r_json['response'].get('errorCode'):
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     continue
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("   Something's wrong: " + str(e)) if printResp else print("    Something's wrong: " + str(e))
@@ -352,121 +414,171 @@ class ApiAPICEM:
 
     @staticmethod
     def api_get_pnp_project_devices(projectID, printResp=True):
-        """ Gets all devices of PnP project """
+        """ Method gets all devices of the selected PnP project """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # API call
                 response = requests.get(ApiAPICEM.__urlControllerAPI + 'api/v1/pnp-project/' + projectID + '/device', headers=header, verify=False)
+                # Print the response code if printResp is True
                 print("   " + str(response)) if printResp else None
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call returns an error code
                 if isinstance(r_json['response'], dict) and r_json['response'].get('errorCode'):
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     continue
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("   Something's wrong: " + str(e))
 
     @staticmethod
     def api_get_pnp_devices(printResp=True):
-        """ Gets all devices """
+        """ Method gets all PnP devices in the APIC-EM """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # API call
                 response = requests.get(ApiAPICEM.__urlControllerAPI + 'api/v1/pnp-device', headers=header, verify=False)
+                # Print the response code if printResp is True
                 print("   " + str(response)) if printResp else None
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call returns an error code
                 if isinstance(r_json['response'], dict) and r_json['response'].get('errorCode'):
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     continue
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("   Something's wrong: " + str(e))
 
     @staticmethod
     def api_delete_pnp_devices(deviceID, printResp=True):
-        """ Delete devices """
+        """ Method deletes a PnP device from the APIC-EM """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # API call
                 response = requests.delete(ApiAPICEM.__urlControllerAPI + 'api/v1/pnp-device/' + deviceID, headers=header, verify=False)
+                # Print the response code if printResp is True
                 print("    " + str(response)) if printResp else None
+                # If the response code is 202 and printResp is True
                 if response.status_code == 202 and printResp:
                     print("    Device was successfully deleted!")
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call returns an error code
                 if isinstance(r_json['response'], dict) and r_json['response'].get('errorCode'):
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     continue
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("    Something's wrong: " + str(e))
 
     @staticmethod
     def api_delete_pnp_project_devices(projectID, deviceID, printResp=True):
-        """ Delete device from PnP project """
+        """ Method deletes a device from the selected PnP project """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # API call
                 response = requests.delete(ApiAPICEM.__urlControllerAPI + 'api/v1/pnp-project/' + projectID + '/device/' + deviceID, headers=header, verify=False)
+                # Print the response code if printResp is True
                 print("     " + str(response)) if printResp else None
+                # Transform a response to JSON format
                 r_json = response.json()
+                # Use the API call method with taskID parameter to get information about a completed API call
                 result = ApiAPICEM.api_get_task_info(r_json["response"]["taskId"])
+                # If the request call doesn't return an error
                 if result["response"].get("isError") == False and printResp:
                     print("     Device was successfully deleted!")
                     pass
+                # If the request call returns an error
                 if result["response"].get("isError") == True and printResp:
                     print("     Device has already been deleted!")
                     pass
+                # If the request call returns an error code
                 if isinstance(r_json['response'], dict) and r_json['response'].get('errorCode'):
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     continue
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("    Something's wrong: " + str(e))
 
     @staticmethod
     def api_get_pnp_files_for_post_project_devices(namespace):
-        """ Gets all PnP configurations """
+        """ Method gets all configurations or all images uploaded in the APIC-EM """
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # API call
                 response = requests.get(ApiAPICEM.__urlControllerAPI + 'api/v1/file/namespace/' + namespace, headers=header, verify=False)
+                # Transform a response to JSON format
                 r_json = response.json()
+                # Gets all configurations
                 if namespace == "config":
+                    # Save the response into the list
                     configurationList = r_json['response']
                     #print("File list " + json.dumps(configurationList, indent=2))
+                    # Create tuple in format [("configName", "configId"),...]
                     configurationTuple = [(configuration['name'], configuration['id']) for configuration in configurationList]
                     #print("File tuple " + json.dumps(configurationTuple, indent=2))
+                    # Return created tuple
                     return configurationTuple
+                # Get all images
                 elif namespace == "image":
+                    # Save the response into the list
                     imageList = r_json['response']
                     #print("File list " + json.dumps(imageList, indent=2))
+                    # Create tuple in format [("imageName", "imageId"),...]
                     imageTuple = [(image['name'], image['id']) for image in imageList]
                     #print("File tuple " + json.dumps(imageTuple, indent=2))
+                    # Return created tuple
                     return imageTuple
+                # If the request call returns an error code
                 elif isinstance(r_json['response'], dict) and r_json['response'].get('errorCode'):
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
@@ -479,44 +591,55 @@ class ApiAPICEM:
 
     @staticmethod
     def api_post_pnp_project_devices(projectID, data_set):
-        """ Post devices to PnP project """
+        """ Method posts devices into the selected PnP project """
         try:
+            # Variables for final stats
             cycle = 0
             number = 0
             num_conf = 0
             num_im = 0
+            # Use the API call method with "config" parameter to get all configurations in the APIC-EM
             configurationTuple = ApiAPICEM.api_get_pnp_files_for_post_project_devices("config")
+            # Use the API call method with "image" parameter to get all images in the APIC-EM
             imageTuple = ApiAPICEM.api_get_pnp_files_for_post_project_devices("image")
+            # Run the cycle for posting devices according to rows in XLS table ("data_set" is the list of dictionaries)
             for i in data_set:
                 cycle += 1
+                # Find the configId based on a configuration name by comparing the "i" dictionary and the tuple
                 try:
                     configurationName = i["hostName"] + "_configuration"
                     configId = [id for cn, id in configurationTuple if cn == configurationName][0]
                 except Exception as e:
+                    # If no match was found
                     configId = None
+                # Find the imageId based on a image name by comparing the "i" dictionary and the tuple
                 try:
                     imageName = i["image"]
                     imageId = [id for imn, id in imageTuple if imn == imageName][0]
                 except Exception as e:
+                    # If no match was found
                     imageId = None
-
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # Create a payload for POST method
                 payload = [{
                     "hostName": i["hostName"],
                     "serialNumber": i["serialNumber"],
                     "platformId": i["platformId"],
                     }]
-                #
                 #print("Payload " + str(counter) + json.dumps(payload, indent=2))
+
+                # Adds a devCert parameter to the created payload
                 if i["devCert"] == "yes":
                     payload[0]["pkiEnabled"] = True
                 else:
                     payload[0]["pkiEnabled"] = False
-                #print("Payload " + str(counter) + json.dumps(payload, indent=2))
+                # If a match was found adds the appropriate configId to the created payload
                 if configId is not None:
                     payload[0]["configId"] = configId
                     print("\n" + "   Configuration " + configurationName + " was added to device " + i["hostName"] + " for upload to the PnP project!")
                     num_conf += 1
+                # Otherwise print a question
                 else:
                     cmd = input("\n" + "   Do you want to upload device " + i["hostName"] + " without configuration? (y/n/q for quit upload) ")
                     if cmd == "q" or cmd == "Q":
@@ -529,25 +652,32 @@ class ApiAPICEM:
                     if cmd == "y" or cmd == "Y":
                         print("\n" + "   WARNING! There is no configuration " + configurationName + " for the device " + i["hostName"] + " in the APIC-EM!")
                         pass
-                #print("Payload " + str(counter) + json.dumps(payload, indent=2))
+                # If a match was found adds the appropriate imageId to the created payload
                 if imageId is not None:
                     payload[0]["imageId"] = imageId
                     print("   Image " + imageName + " was added to device " + i["hostName"] + " for upload to the PnP project!")
                     num_im += 1
+                # Otherwise print warning notification
                 else:
                     print("   WARNING! There is no image " + imageName + " for the device " + i["hostName"] + " in the xlsx or in the APIC-EM!")
                     pass
-                #print("Payload " + str(counter) + json.dumps(payload, indent=2))
                 try:
+                    # API call
                     response = requests.post(ApiAPICEM.__urlControllerAPI + 'api/v1/pnp-project/' + projectID + '/device', data=json.dumps(payload), headers=header, verify=False)
+                    # Print the response code
                     print("    " + str(response))
+                    # Transform a response to JSON format
                     r_json = response.json()
+                    # Use the API call method with taskID parameter to get information about a completed API call
                     result = ApiAPICEM.api_get_task_info(r_json["response"]["taskId"])
                     try:
+                        # If the request call doesn't return an error
                         if result["response"].get("isError") == False:
                             print("    Device " + i["hostName"] + " was successfully created in selected PnP project!")
                             number += 1
+                        # If the request call returns an error
                         if result["response"].get("isError") == True:
+                            # And the failure reason starts with the letter P
                             if result["response"]["failureReason"][0] == "P":
                                 print("    ERROR! Device " + i["hostName"] + " has been already created in selected PnP project!")
                             else:
@@ -556,6 +686,7 @@ class ApiAPICEM:
                         print("    Something's wrong: " + str(e))
                 except Exception as e:
                     print("    Something's wrong: " + str(e))
+            # Print the stats about posting devices into the selected PnP project
             print("\n" + "     STATS!"
                   "\n" + "     Devices with configuration:               " + str(num_conf) + " / " + str(cycle) + ""
                   "\n" + "     Devices with image:                       " + str(num_im) + " / " + str(cycle) + ""
@@ -565,63 +696,84 @@ class ApiAPICEM:
 
     @staticmethod
     def api_get_task_info(taskID):
-        """ Gets information from completed task """
+        """ Method gets information about a completed API call"""
         try:
-            # Defines maximum attempts for request
+            # Define maximum attempts for the request
             counter = 3
             while True:
+                # Create a header with instruction
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # API call
                 response = requests.get(ApiAPICEM.__urlControllerAPI + 'api/v1/task/' + taskID, headers=header, verify=False)
+                # Transform a response to JSON format
                 r_json = response.json()
+                # If the request call returns an error code "RBAC"
                 if isinstance(r_json['response'], dict) and r_json['response'].get('errorCode')=="RBAC":
+                    # Call the method for creating new ticket
                     ApiAPICEM.__ticket.get_new_ticket()
+                    # Subtract the counter
                     counter -= 1
                     if counter < 0:
                         raise RuntimeError()
                     continue
+                # Return the response in JSON format
                 return r_json
         except Exception as e:
             print("   Something's wrong: " + str(e))
 
     @staticmethod
     def api_post_pnp_project_devices_toISE(projectID, data_set, ise_credentials_b64, ise_url):
-        """ Post devices to PnP project and ISE """
+        """ Method posts devices into the selected PnP project and creates devices in Cisco ISE"""
         try:
+            # Variables for final stats
             cycle = 0
             number = 0
             num_conf = 0
             num_im = 0
             num_ise = 0
+            # Use the API call method with "config" parameter to get all configurations in the APIC-EM
             configurationTuple = ApiAPICEM.api_get_pnp_files_for_post_project_devices("config")
+            # Use the API call method with "image" parameter to get all images in the APIC-EM
             imageTuple = ApiAPICEM.api_get_pnp_files_for_post_project_devices("image")
+            # Run the cycle for posting devices according to rows in XLS table ("data_set" is the list of dictionaries)
             for i in data_set:
+                # Part for the APIC-EM
                 cycle += 1
+                # Find the configId based on a configuration name by comparing the "i" dictionary and the tuple
                 try:
                     configurationName = i["hostName"] + "_configuration"
                     configId = [id for cn, id in configurationTuple if cn == configurationName][0]
                 except Exception as e:
+                    # If no match was found
                     configId = None
+                # Find the imageId based on a image name by comparing the "i" dictionary and the tuple
                 try:
                     imageName = i["image"]
                     imageId = [id for imn, id in imageTuple if imn == imageName][0]
                 except Exception as e:
+                    # If no match was found
                     imageId = None
-
+                # Create a header with instruction for the APIC-EM
                 header = {"content-type": "application/json", "X-Auth-Token": ApiAPICEM.__ticket.get_ticket()}
+                # Create a payload for POST method into the APIC-EM
                 payload = [{
                     "hostName": i["hostName"],
                     "serialNumber": i["serialNumber"],
                     "platformId": i["platformId"],
                     }]
-                #
+                #print("Payload " + str(counter) + json.dumps(payload, indent=2))
+
+                # Adds a devCert parameter to the created payload
                 if i["devCert"] == "yes":
                     payload[0]["pkiEnabled"] = True
                 else:
                     payload[0]["pkiEnabled"] = False
+                # If a match was found adds the appropriate configId to the created payload
                 if configId is not None:
                     payload[0]["configId"] = configId
                     print("\n" + "   Configuration " + configurationName + " was added to device " + i["hostName"] + " for upload to the PnP project!")
                     num_conf += 1
+                # Otherwise print a question
                 else:
                     cmd = input("\n" + "   Do you want to upload device " + i["hostName"] + " without configuration? (y/n/q for quit upload) ")
                     if cmd == "q" or cmd == "Q":
@@ -635,23 +787,32 @@ class ApiAPICEM:
                     if cmd == "y" or cmd == "Y":
                         print("\n" + "   WARNING! There is no configuration " + configurationName + " for the device " + i["hostName"] + " in the APIC-EM!")
                         pass
+                # If a match was found adds the appropriate imageId to the created payload
                 if imageId is not None:
                     payload[0]["imageId"] = imageId
                     print("   Image " + imageName + " was added to device " + i["hostName"] + " for upload to the PnP project!")
                     num_im += 1
+                # Otherwise print warning notification
                 else:
                     print("   WARNING! There is no image " + imageName + " for the device " + i["hostName"] + " in the xlsx or in the APIC-EM!")
                     pass
                 try:
+                    # API call into the APIC-EM
                     response = requests.post(ApiAPICEM.__urlControllerAPI + 'api/v1/pnp-project/' + projectID + '/device', data=json.dumps(payload), headers=header, verify=False)
+                    # Print the response code
                     print("    " + str(response))
+                    # Transform a response to JSON format
                     r_json = response.json()
+                    # Use the API call method with taskID parameter to get information about a completed API call
                     result = ApiAPICEM.api_get_task_info(r_json["response"]["taskId"])
                     try:
+                        # If the request call doesn't return an error
                         if result["response"].get("isError") == False:
                             print("    Device " + i["hostName"] + " was successfully created in selected PnP project!")
                             number += 1
+                        # If the request call returns an error
                         if result["response"].get("isError") == True:
+                            # And the failure reason starts with the letter P
                             if result["response"]["failureReason"][0] == "P":
                                 print("    ERROR! Device " + i["hostName"] + " has been already created in selected PnP project!")
                             else:
@@ -660,9 +821,11 @@ class ApiAPICEM:
                         print("    Something's wrong: " + str(e))
                 except Exception as e:
                     print("    Something's wrong with upload to APIC-EM: " + str(e))
-
+                # Part for the Cisco ISE
                 try:
+                    # Create a header with instruction for the Cisco ISE
                     header_ise = {"content-type": "application/json", "authorization": "Basic " + ise_credentials_b64, "accept": "application/json", "cache-control": "no-cache"}
+                    # Create a payload for POST method into the Cisco ISE
                     payload_ise = {
                         "NetworkDevice" : {
                         #"id" : "223456789",
@@ -714,6 +877,7 @@ class ApiAPICEM:
                         #"NetworkDeviceGroupList": ["Location#"+i["location"], "Device Type#"+i["type"]]
                         }
                     }
+                    # If all conditions are met, then adds a RADIUS parameter to the created payload
                     try:
                         if i["radius"] == "yes":
                             if i["radiusSecret"] == "":
@@ -724,6 +888,7 @@ class ApiAPICEM:
                     except RuntimeError:
                         print("     INFO! Upload was stopped! Please edit the xls table correctly!")
                         break
+                    # If all conditions are met, then adds a TACACS parameter to the created payload
                     try:
                         if i["tacacs"] == "yes":
                             if i["tacacsSecret"] == "":
@@ -735,13 +900,18 @@ class ApiAPICEM:
                     except RuntimeError:
                         print("     INFO! Upload was stopped! Please edit the xls table correctly!")
                         break
+                    # API call into the Cisco ISE
                     response_ise = requests.request("POST", ise_url, data=json.dumps(payload_ise), headers=header_ise, verify=False)
+                    # Print the response code
                     print("    " + str(response_ise))
+                    # If the response code is 201
                     if response_ise.status_code == 201:
                         print("    Device " + i["hostName"] + " was successfully created in ISE!")
                         num_ise += 1
+                    # If the response code is 400
                     elif response_ise.status_code == 400:
                         print("    ERROR! Device " + i["hostName"] + " already exists in ISE!")
+                    # If the response code is 401
                     elif response_ise.status_code == 401:
                         print("    ERROR! Device " + i["hostName"] + " was not created in ISE! User does not have permission! Enter correct credentials!")
                         break
@@ -751,6 +921,7 @@ class ApiAPICEM:
                 except Exception:
                     print("    ERROR! Device " + i["hostName"] + " was not created in ISE! Connection is not working! Enter correct IP address!")
                     break
+            # Print the stats about posting devices into the selected PnP project
             print("\n" + "     STATS!"
                   "\n" + "     Devices with configuration:               " + str(num_conf) + " / " + str(cycle) + ""
                   "\n" + "     Devices with image:                       " + str(num_im) + " / " + str(cycle) + ""
