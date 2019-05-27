@@ -1,4 +1,6 @@
 # EasyPnP/easypnp_networksys_cz/model
+This is the model part of the EasyPnP tool.
+
   - [cache.py](#cache.py)
   - [client.py](#client.py)
   - [credentials.py](#credentials.py)
