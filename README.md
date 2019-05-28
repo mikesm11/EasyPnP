@@ -4,7 +4,7 @@
   - [Instruction Manual](#instruction-manual)
   - [Launch](#launch)
   - [Verified Environment](#verified-environment)
-  - [main.py](#main.py)
+  - [main.py](#main-py)
   - [easypnp_networksys_cz](#easypnp_networksys_cz)
 
 # Introduction
@@ -63,11 +63,13 @@ Open the operating system CLI and follow the instructions:
 # main.py
 > Notice the UML [architecture](UML_architecture.pdf) of Easypnp.
 
+**EasyPnP** is designed for modular use. For this reason, its structure is divided into three logical blocks — `program`, `model` and `module` part. Apart from these blocks, only the `main.py` file is included. 
+
 :page_facing_up:
-EasyPnP is designed for modular use. For this reason, its structure is divided into three logical blocks — program, model and module part. Apart from these blocks, only the `main.py` file is included. This is the main initialization file and is used to launch the EasyPnP tool.
+This is the main initialization file and is used to launch the EasyPnP tool.
 
 # easypnp_networksys_cz
 :file_folder:
-This folder contains program, model and module part of the EasyPnP tool. The descriptions of all files are inside.
+This folder contains `program`, `model` and `module` part of the EasyPnP tool. The descriptions of all files are inside.
 
                      
