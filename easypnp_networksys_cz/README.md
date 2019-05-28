@@ -1,14 +1,14 @@
 # EasyPnP/easypnp_networksys_cz
 This is the `program` part of the EasyPnP tool.
 
-  - [program.py](#program-py)
+  - [program.py](#programpy)
   - [model](#model)
   - [pnp_apicem](#pnp_apicem)
   - [pnp_dnac](#pnp_dnac)
 
 # program.py
 :page_facing_up:
-This is the main control file to enter the correct controller address, enter the user credentials, input to the model part and input to the selected module. 
+This is the main control file to enter the correct controller address (using the `re` library), enter the user credentials, input to the model part and input to the selected module. 
 
 # model 
 :file_folder: 

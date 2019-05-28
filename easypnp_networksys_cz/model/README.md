@@ -1,12 +1,12 @@
 # EasyPnP/easypnp_networksys_cz/model
 This is the `model` part of the EasyPnP tool.
 
-  - [isecredentials.py, sshcredentials.py, usercredentials.py](#setcredentials.py)
-  - [credentials.py](#credentials-py)
+  - [isecredentials.py, sshcredentials.py, usercredentials.py](#setcredentialspy)
+  - [credentials.py](#credentialspy)
   - [client.py](#clientpy)
-  - [directory.py](#directory_py)
-  - [cache.py](#cache.py)
-  - [url.py](#url*py)
+  - [directory.py](#directorypy)
+  - [cache.py](#cachepy)
+  - [url.py](#urlpy)
   
 # isecredentials.py, sshcredentials.py, usercredentials.py 
 :page_facing_up:
@@ -14,7 +14,7 @@ The methods contained in these files serve to display a dialog box (using the `T
 
 # credentials.py
 :page_facing_up:
-The file serve to store user credentials to the controller, to the particular device and to the Cisco ISE. The content is a `Credentials` class with 8 global variables that are accessible to other parts. The user credentials are stored only when the program runs into these variables. If the program is restarted, the credentials are not stored anywhere.
+This file serve to store user credentials to the controller, to the particular device and to the Cisco ISE. The content is a `Credentials` class with 8 global variables that are accessible to other parts. The user credentials are stored only when the program runs into these variables. If the program is restarted, the credentials are not stored anywhere.
 
 # client.py 
 :page_facing_up:
@@ -22,7 +22,7 @@ This file serve to automatically delete and restart the particular network devic
 
 # directory.py 
 :page_facing_up:
-There are 2 methods that allow you to select a XLS table and a configuration template in this file. The `Tkinter` library (its `filedialog` module) is used to display a dialog box which serves for interactive selection of these files from the internal repository. The selection of files is limited by the parameter — the table with defined devices must be in **XLS** format (extension xlsx), the configuration template must be in **Jinja2** format (extension jnj). The table is copied to the `devices` folder and the configuration template to the `template` folder (of the EasyPnP tool), because to keep the selected files even after the tool has ended, as well as the stability of the path to these files.
+There are 2 methods that allow you to select a XLS table and a configuration template in this file. The `Tkinter` library (its `filedialog` module) is used to display a dialog box which serves for interactive selection of these files from the internal repository. The selection of files is limited by the parameter — the table with defined devices must be in **XLS** format (extension xlsx), the configuration template must be in **Jinja2** format (extension jnj). The table is copied into the `devices` folder and the configuration template into the `template` folder (of the EasyPnP tool) to keep this file after the EasyPnP ends and to keep the stability of file path.
 
 # cache.py 
 :page_facing_up:

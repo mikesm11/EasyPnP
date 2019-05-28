@@ -4,7 +4,7 @@
   - [Instruction Manual](#instruction-manual)
   - [Launch](#launch)
   - [Verified Environment](#verified-environment)
-  - [main.py](#main-py)
+  - [main.py](#mainpy)
   - [easypnp_networksys_cz](#easypnp_networksys_cz)
 
 # Introduction
