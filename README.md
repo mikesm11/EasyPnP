@@ -61,7 +61,7 @@ Open the operating system CLI and follow the instructions:
   - Cisco ISE 2.3
   
 # main.py
-> Notice the UML [architecture](UML_architecture.pdf) of Easypnp.
+> Notice the UML [architecture](UML_architecture.pdf) of EasyPnP.
 
 **EasyPnP** is designed for modular use. For this reason, its structure is divided into three logical blocks — `program`, `model` and `module` part. Apart from these blocks, only the `main.py` file is included. 
 
